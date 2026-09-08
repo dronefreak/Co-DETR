@@ -4,6 +4,8 @@ import subprocess
 
 import torch
 
+from mmdet.utils import torch_load_compat
+
 
 def parse_args():
     parser = argparse.ArgumentParser(
@@ -15,7 +17,7 @@ def parse_args():
 
 
 def process_checkpoint(in_file, out_file):
-    checkpoint = torch.load(in_file, map_location='cpu')
+    checkpoint = torch_load_compat(in_file, map_location='cpu')
     # remove optimizer for smaller file size
     if 'optimizer' in checkpoint:
         del checkpoint['optimizer']

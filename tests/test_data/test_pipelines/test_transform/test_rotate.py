@@ -92,7 +92,7 @@ def test_rotate():
     # test clockwise rotation with angle 90, PolygonMasks
     results = construct_toy_data(poly2mask=False)
     results_rotated = rotate_module(copy.deepcopy(results))
-    gt_masks = [[np.array([2, 0, 2, 1, 1, 1, 1, 0], dtype=np.float)]]
+    gt_masks = [[np.array([2, 0, 2, 1, 1, 1, 1, 0], dtype=float)]]
     results_gt['gt_masks'] = PolygonMasks(gt_masks, 2, 4)
     check_result_same(results_gt, results_rotated)
 
@@ -148,7 +148,7 @@ def test_rotate():
     # and specify the ratation center, PolygonMasks
     results = construct_toy_data(poly2mask=False)
     results_rotated = rotate_module(copy.deepcopy(results))
-    gt_masks = [[np.array([0, 0, 0, 0, 1, 0, 1, 0], dtype=np.float)]]
+    gt_masks = [[np.array([0, 0, 0, 0, 1, 0, 1, 0], dtype=float)]]
     results_gt['gt_masks'] = PolygonMasks(gt_masks, 2, 4)
     check_result_same(results_gt, results_rotated)
 

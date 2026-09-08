@@ -6,6 +6,8 @@ from collections import OrderedDict
 import torch
 from mmcv import Config
 
+from mmdet.utils import torch_load_compat
+
 
 def parse_config(config_strings):
     temp_file = tempfile.NamedTemporaryFile()
@@ -20,7 +22,7 @@ def parse_config(config_strings):
 
 
 def convert(in_file, out_file):
-    checkpoint = torch.load(in_file)
+    checkpoint = torch_load_compat(in_file)
     in_state_dict = checkpoint.pop('state_dict')
     out_state_dict = OrderedDict()
     meta_info = checkpoint['meta']

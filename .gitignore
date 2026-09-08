@@ -123,3 +123,7 @@ work_dirs/
 *.py~
 *.sh~
 
+# local inference/eval artifacts and downloaded checkpoints (not versioned)
+outputs/
+checkpoints/
+

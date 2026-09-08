@@ -7,6 +7,8 @@ from collections import OrderedDict
 import torch
 from mmcv import Config
 
+from mmdet.utils import torch_load_compat
+
 
 def is_head(key):
     valid_head_list = [
@@ -119,7 +121,7 @@ def convert(in_file, out_file, num_classes):
     and this tool is used for upgrading checkpoints trained with old versions
     to the latest one.
     """
-    checkpoint = torch.load(in_file)
+    checkpoint = torch_load_compat(in_file)
     in_state_dict = checkpoint.pop('state_dict')
     out_state_dict = OrderedDict()
     meta_info = checkpoint['meta']

@@ -94,7 +94,7 @@ def test_shear():
     results = construct_toy_data(poly2mask=False)
     results_sheared = shear_module(copy.deepcopy(results))
     print(results_sheared['gt_masks'])
-    gt_masks = [[np.array([0, 0, 2, 0, 3, 1, 1, 1], dtype=np.float)]]
+    gt_masks = [[np.array([0, 0, 2, 0, 3, 1, 1, 1], dtype=float)]]
     results_gt['gt_masks'] = PolygonMasks(gt_masks, 2, 4)
     check_result_same(results_gt, results_sheared)
 
@@ -131,7 +131,7 @@ def test_shear():
     # test PolygonMasks with shear vertically, magnitude=-1
     results = construct_toy_data(poly2mask=False)
     results_sheared = shear_module(copy.deepcopy(results))
-    gt_masks = [[np.array([0, 0, 2, 0, 2, 0, 0, 1], dtype=np.float)]]
+    gt_masks = [[np.array([0, 0, 2, 0, 2, 0, 0, 1], dtype=float)]]
     results_gt['gt_masks'] = PolygonMasks(gt_masks, 2, 4)
     check_result_same(results_gt, results_sheared)
 

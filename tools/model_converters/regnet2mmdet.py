@@ -4,6 +4,8 @@ from collections import OrderedDict
 
 import torch
 
+from mmdet.utils import torch_load_compat
+
 
 def convert_stem(model_key, model_weight, state_dict, converted_names):
     new_key = model_key.replace('stem.conv', 'conv1')
@@ -55,7 +57,7 @@ def convert_reslayer(model_key, model_weight, state_dict, converted_names):
 def convert(src, dst):
     """Convert keys in pycls pretrained RegNet models to mmdet style."""
     # load caffe model
-    regnet_model = torch.load(src)
+    regnet_model = torch_load_compat(src)
     blobs = regnet_model['model_state']
     # convert to pytorch style
     state_dict = OrderedDict()

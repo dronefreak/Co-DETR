@@ -4,11 +4,13 @@ from collections import OrderedDict
 
 import torch
 
+from mmdet.utils import torch_load_compat
+
 
 def moco_convert(src, dst):
     """Convert keys in pycls pretrained moco models to mmdet style."""
     # load caffe model
-    moco_model = torch.load(src)
+    moco_model = torch_load_compat(src)
     blobs = moco_model['state_dict']
     # convert to pytorch style
     state_dict = OrderedDict()
