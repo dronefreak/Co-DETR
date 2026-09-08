@@ -14,6 +14,34 @@
 
 > **This is [dronefreak/Co-DETR](https://github.com/dronefreak/Co-DETR)**, a community-maintained fork of the original [Sense-X/Co-DETR](https://github.com/Sense-X/Co-DETR) research repo. The upstream project has been unmaintained for years and no longer installs cleanly on modern systems. This fork keeps the original model code and results intact while adding: compatibility fixes for modern Python/NumPy, a validated one-command environment setup script, an end-to-end pipeline for fine-tuning/evaluating/running inference on **your own custom datasets**, and refreshed documentation. See [Acknowledgements & Attribution](#acknowledgements--attribution) for details on what changed and why.
 
+## What this fork changes
+
+Original model code, configs, and reported results are untouched. Changes so
+far (this list will move to a `CHANGELOG.md` once it grows further):
+
+**Compatibility**
+- Removed deprecated NumPy aliases (`np.float`/`np.int`/`np.bool`/`np.object`, 33 uses across 14 files) — the repo now imports/runs under NumPy ≥ 1.24.
+- Fixed a `collections.abc` import that breaks on Python ≥ 3.10 (`tools/misc/browse_dataset.py`).
+- Added a `torch.load` compat shim (`mmdet/utils/torch_compat.py`) so checkpoint loading works from PyTorch 1.11 through current releases; wired into `mmcv_custom/checkpoint.py` and all `tools/model_converters/*`.
+- Raised the supported `mmcv` ceiling to 1.7.2 and refreshed stale requirement pins.
+
+**Environment**
+- `tools/setup_codetr_env.sh` — one command builds a validated `codetr` conda env (Python 3.8, torch 1.11.0+cu113, mmcv-full 1.5.0).
+- `requirements/codetr.txt` + `requirements/codetr_freeze.txt` — top-level pins and an exact freeze for byte-for-byte reproduction.
+
+**Tooling**
+- `tools/inference.py` — one CLI for a single image, a folder, a video file, or a live **webcam** (mode auto-detected); optional JSON detection export, `--max-frames`, `--record`.
+- `tools/eval.py` — single-GPU wrapper around `tools/test.py` that prints a clean metrics summary table.
+- Custom-dataset templates: `projects/configs/_base_/datasets/custom_coco_detection.py` and `projects/configs/co_dino/co_dino_5scale_r50_1x_custom_dataset.py`.
+
+**Docs**
+- New tutorials under `docs/en/tutorials/`: `finetune_custom_dataset.md`, `evaluate_custom_dataset.md`, `inference.md`.
+- README: replaced 7 dead paperswithcode badges, repointed 27 Model Zoo `config` links from upstream URLs to in-repo paths, added a one-command setup section and a CUDA 12 / PyTorch 2 status note.
+
+**Verified**
+- Inference smoke-tested end-to-end on the full Co-Deformable-DETR COCO zoo (R50 + Swin-T/S/B/L) and Co-DINO R50 — every checkpoint loads with a full state-dict key match; all four `tools/inference.py` input modes exercised.
+- Vendored `tests/` suite run once in the `codetr` env: 369 passed, 38 failed — all failures pre-existing (missing fixture data / uninstalled optional deps), none from fork changes.
+
 ## News
 
 * ***[07/21/2024]*** Check out our Co-DETR detection and segmentation checkpoints, fine-tuned on COCO and LVIS, now available on [Hugging Face](https://huggingface.co/zongzhuofan). We've achieved new state-of-the-art performance in instance segmentation!
@@ -220,9 +248,7 @@ without it:
   the original authors on [Hugging Face](https://huggingface.co/zongzhuofan)
   and Google Drive; this fork does not claim authorship of those weights.
 
-This fork (dronefreak/Co-DETR) additionally adds: Python/NumPy compatibility
-fixes for modern environments, a validated reproducible environment setup
-script, and end-to-end training/evaluation/inference tooling and docs for
-fine-tuning on custom datasets (see the `## Running` section above and
-`docs/en/tutorials/`). These additions are released under the same MIT
-license as the rest of the repository.
+This fork (dronefreak/Co-DETR) adds compatibility fixes, a reproducible
+environment setup, and end-to-end train/eval/inference tooling and docs — see
+[What this fork changes](#what-this-fork-changes) for the itemized list. These
+additions are released under the same MIT license as the rest of the repository.
