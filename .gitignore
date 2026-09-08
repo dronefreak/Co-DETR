@@ -125,5 +125,12 @@ work_dirs/
 
 # local inference/eval artifacts and downloaded checkpoints (not versioned)
 outputs/
+inference/
 checkpoints/
+
+# sample images pulled from the internet for local inference smoke tests
+assets/
+
+# personal working notes / roadmap (not for tracking)
+PROJECT_NOTES.md
 

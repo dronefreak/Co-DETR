@@ -171,18 +171,20 @@ evaluating on a custom dataset), use the `tools/eval.py` wrapper instead — see
 python tools/eval.py projects/configs/co_deformable_detr/co_deformable_detr_r50_1x_coco.py path_to_checkpoint --eval bbox
 ```
 
-### Inference (images & video)
-Run a trained/pretrained checkpoint on a single image, a folder of images, or
-a video with one consistent CLI (auto-detects the input type, optionally
-saves raw detections as JSON):
+### Inference (image / folder / video / webcam)
+Run a trained/pretrained checkpoint on a single image, a folder of images, a
+video file, or a live webcam with one consistent CLI (auto-detects the input
+type, optionally saves raw detections as JSON):
 ```shell
 python tools/inference.py \
     --config projects/configs/co_dino/co_dino_5scale_r50_1x_coco.py \
     --checkpoint checkpoints/co_dino_5scale_r50_1x_coco.pth \
     --input demo/demo.jpg --out-dir outputs/
+# folder:  --input path/to/images/        video:  --input clip.mp4 --max-frames 300
+# webcam:  --input webcam --show --record
 ```
 See [`docs/en/tutorials/inference.md`](docs/en/tutorials/inference.md) for
-folder/video examples and all flags.
+per-mode examples and all flags.
 
 ## Cite Co-DETR
 
