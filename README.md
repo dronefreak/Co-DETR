@@ -11,7 +11,7 @@ introduction, full SOTA model zoo incl. ViT-L / Objects365 / LVIS, original
 instructions) is preserved at [`README.upstream.md`](README.upstream.md).
 
 <p align="center">
-  <img src="https://huggingface.co/dronefreak/co-deformable-detr-r50-1x-coco/resolve/main/assets/demo_banner.gif" alt="Co-Deformable-DETR R50 detections on two dashcam clips" width="820">
+  <img src="https://huggingface.co/dronefreak/co-deformable-detr-r50-1x-coco/resolve/main/assets/demo_banner.gif" alt="Co-Deformable-DETR R50 detections on two dashcam clips" width="720">
 </p>
 
 <p align="center">
