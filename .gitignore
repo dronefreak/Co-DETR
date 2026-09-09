@@ -134,3 +134,7 @@ assets/
 # personal working notes / roadmap (not for tracking)
 PROJECT_NOTES.md
 
+
+# hf mirror tooling
+hf_mirror/staging/
+hf_cards/
