@@ -1,4 +1,4 @@
-# Co-DETR — maintained fork
+# Co-DETR: maintained fork
 
 **[dronefreak/Co-DETR](https://github.com/dronefreak/Co-DETR)** is a
 community-maintained fork of [Sense-X/Co-DETR](https://github.com/Sense-X/Co-DETR)
@@ -25,24 +25,66 @@ instructions) is preserved at [`README.upstream.md`](README.upstream.md).
 ## Quickstart: inference
 
 ```shell
-# 1. one-command validated environment (Python 3.8 / torch 1.11.0+cu113 / mmcv-full 1.5.0)
+# one-command validated environment (Python 3.8 / torch 1.11.0+cu113 / mmcv-full 1.5.0)
 bash tools/setup_codetr_env.sh
 conda activate codetr
-
-# 2. grab a checkpoint + its config from the Hub (any repo from the model zoo below)
 pip install -U "huggingface_hub[cli]"
+```
+
+Three checkpoints spanning the zoo, so you can pick fast-and-light,
+a balanced middle, or most-accurate. All were measured on an RTX 4070 SUPER
+(12 GB); see each card's "Measured inference footprint" for the full method.
+
+**Lightest: Co-DINO R50, 1x** (52.1 AP, 48.9 M params run at inference, ~1.6 GB
+VRAM, ~183 ms/image):
+
+```shell
 hf download dronefreak/co-dino-5scale-r50-1x-coco \
     co_dino_5scale_r50_1x_coco.pth co_dino_5scale_r50_1x_coco.py --local-dir checkpoints/
 
-# 3. run detection — one CLI for image / folder / video / webcam (input type auto-detected)
 python tools/inference.py \
     --config checkpoints/co_dino_5scale_r50_1x_coco.py \
     --checkpoint checkpoints/co_dino_5scale_r50_1x_coco.pth \
     --input demo/demo.jpg --out-dir outputs/ --save-json
 ```
 
+**Heaviest that fits this 12 GB card: Co-DINO Swin-L, 3x** (60.0 AP, 219.2 M
+params, ~2.3 GB VRAM, ~289 ms/image):
+
 ```shell
-# other input modes
+hf download dronefreak/co-dino-5scale-swin-l-3x-coco \
+    co_dino_5scale_swin_large_3x_coco.pth co_dino_5scale_swin_large_3x_coco.py --local-dir checkpoints/
+
+python tools/inference.py \
+    --config checkpoints/co_dino_5scale_swin_large_3x_coco.py \
+    --checkpoint checkpoints/co_dino_5scale_swin_large_3x_coco.pth \
+    --input demo/demo.jpg --out-dir outputs/ --save-json
+```
+
+**Most accurate on COCO: Co-DINO ViT-L** (65.9 AP val / 66.0 AP test-dev,
+348.1 M params run at inference, 365.4 M total; kept on COCO's 80 classes so
+this stays directly comparable to the R50 and Swin-L examples above. Two of
+the zoo's other ViT-L checkpoints are LVIS-trained and score higher still,
+68.0 AP, but on LVIS's 1203-class vocabulary, a different benchmark, not a
+higher number on the same one; see the [model zoo](#model-zoo-mirrored-to-hugging-face)
+below. This and the other 3 ViT-L checkpoints OOM on this 12 GB card, so
+I've only run it on CPU: ~45.8 s/image, ~17.8 GB peak resident memory. A
+24 GB GPU should have comfortable headroom; I have not verified an exact
+minimum, since 24 GB+ wasn't available to test on):
+
+```shell
+hf download dronefreak/co-dino-5scale-vit-l-coco \
+    co_dino_5scale_vit_large_coco.pth co_dino_5scale_vit_large_coco.py --local-dir checkpoints/
+
+python tools/inference.py \
+    --config checkpoints/co_dino_5scale_vit_large_coco.py \
+    --checkpoint checkpoints/co_dino_5scale_vit_large_coco.pth \
+    --input demo/demo.jpg --out-dir outputs/ --device cuda:0 --save-json
+# no 24 GB+ GPU handy? set --device cpu instead; it just runs much slower
+```
+
+```shell
+# other input modes (work the same for any checkpoint above)
 python tools/inference.py --config <cfg> --checkpoint <ckpt> --input path/to/images/           # folder
 python tools/inference.py --config <cfg> --checkpoint <ckpt> --input clip.mp4 --max-frames 300 # video file
 python tools/inference.py --config <cfg> --checkpoint <ckpt> --input webcam --show --record    # live camera
@@ -106,7 +148,7 @@ Use `--eval bbox segm` for the LVIS instance configs.
 Every non-ViT COCO checkpoint from the upstream zoo, mirrored to a per-model Hub
 repo. Each repo carries the weights, a **self-contained flattened** config,
 `config.json`, and a demo banner generated with that checkpoint. **box AP is the
-authors' COCO `val2017` number, carried from the paper / official model zoo — it
+authors' COCO `val2017` number, carried from the paper / official model zoo. It
 has not been re-evaluated in this fork.** Collections:
 [Co-DINO](https://huggingface.co/collections/dronefreak/co-dino-community-mirrors-6aa090c32ace71749a0033a9)
 ·
@@ -126,7 +168,7 @@ has not been re-evaluated in this fork.** Collections:
 | Swin-L | 1x (12 ep) | 300 | 56.9 | [`co-deformable-detr-swin-l-1x-coco`](https://huggingface.co/dronefreak/co-deformable-detr-swin-l-1x-coco) | [cfg](projects/configs/co_deformable_detr/co_deformable_detr_swin_large_1x_coco.py) |
 | Swin-L | 3x (36 ep) | 900 | 58.5 | [`co-deformable-detr-swin-l-900q-3x-coco`](https://huggingface.co/dronefreak/co-deformable-detr-swin-l-900q-3x-coco) | [cfg](projects/configs/co_deformable_detr/co_deformable_detr_swin_large_900q_3x_coco.py) |
 
-### Co-DINO — 5-scale (COCO `val2017`)
+### Co-DINO, 5-scale (COCO `val2017`)
 
 | Backbone | Schedule | box AP | 🤗 Mirror | Config |
 |---|---|---|---|---|
@@ -165,15 +207,15 @@ authors' Hub ([`zongzhuofan`](https://huggingface.co/zongzhuofan)) and listed in
 
 **Verified:** every mirrored checkpoint loads with a full state-dict key match in
 the `codetr` env; all four `tools/inference.py` input modes exercised. Vendored
-`tests/` suite: 369 passed / 38 failed (all failures pre-existing — missing
-fixture data or uninstalled optional deps — none from fork changes).
+`tests/` suite: 369 passed / 38 failed (all failures pre-existing: missing
+fixture data or uninstalled optional deps; none from fork changes).
 
 ---
 
 ## Attribution
 
 - **[Co-DETR](https://github.com/Sense-X/Co-DETR)** (Zhuofan Zong, Guanglu Song,
-  Yu Liu — SenseTime X-Lab): the original method, implementation, and paper this
+  Yu Liu, SenseTime X-Lab): the original method, implementation, and paper this
   repo is forked from. All credit for Co-DETR itself belongs to the original
   authors; please cite the [paper](#cite).
 - **[MMDetection](https://github.com/open-mmlab/mmdetection)** /
