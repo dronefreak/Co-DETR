@@ -48,18 +48,29 @@ python tools/inference.py \
     --input demo/demo.jpg --out-dir outputs/ --save-json
 ```
 
-**Heaviest that fits this 12 GB card: Co-DINO Swin-L, 3x** (60.0 AP, 219.2 M
-params, ~2.3 GB VRAM, ~289 ms/image):
+**Balanced: Co-DINO Swin-L, Objects365 pretrain → COCO** (64.1 AP, 219.2 M
+params, ~4.35 GB VRAM, ~735 ms/image). I re-ran every COCO-evaluated
+checkpoint in this zoo on this card (fresh `init_detector` + one inference
+call each) to find this: it's **the highest COCO box AP of anything that
+actually fits on a 12 GB GPU here**, the next tier up (the ViT-L pair below,
+65.8-65.9 AP) both confirmed OOM on this card, every single time:
 
 ```shell
-hf download dronefreak/co-dino-5scale-swin-l-3x-coco \
-    co_dino_5scale_swin_large_3x_coco.pth co_dino_5scale_swin_large_3x_coco.py --local-dir checkpoints/
+hf download dronefreak/co-dino-5scale-swin-l-o365-coco \
+    co_dino_5scale_swin_large_16e_o365tococo.pth co_dino_5scale_swin_large_16e_o365tococo.py --local-dir checkpoints/
 
 python tools/inference.py \
-    --config checkpoints/co_dino_5scale_swin_large_3x_coco.py \
-    --checkpoint checkpoints/co_dino_5scale_swin_large_3x_coco.pth \
+    --config checkpoints/co_dino_5scale_swin_large_16e_o365tococo.py \
+    --checkpoint checkpoints/co_dino_5scale_swin_large_16e_o365tococo.pth \
     --input demo/demo.jpg --out-dir outputs/ --save-json
 ```
+
+⚠️ This checkpoint was pretrained on Objects365 before its COCO fine-tune, so
+Objects365's non-commercial-research terms are a real constraint here (see
+[License status](https://huggingface.co/dronefreak/co-dino-5scale-swin-l-o365-coco#license-status)
+on its card). If that rules it out for you, the best COCO-only checkpoint
+with no such caveat is `co-dino-5scale-lsj-swin-l-3x-coco` at 60.7 AP
+(3.22 GB, ~483 ms/image), same download/run pattern as above.
 
 **Most accurate on COCO: Co-DINO ViT-L** (65.9 AP val / 66.0 AP test-dev,
 348.1 M params run at inference, 365.4 M total; kept on COCO's 80 classes so
