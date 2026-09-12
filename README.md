@@ -145,11 +145,12 @@ Use `--eval bbox segm` for the LVIS instance configs.
 
 ## Model zoo (mirrored to Hugging Face)
 
-Every non-ViT COCO checkpoint from the upstream zoo, mirrored to a per-model Hub
-repo. Each repo carries the weights, a **self-contained flattened** config,
-`config.json`, and a demo banner generated with that checkpoint. **box AP is the
-authors' COCO `val2017` number, carried from the paper / official model zoo. It
-has not been re-evaluated in this fork.** Collections:
+**26 of the 27 mirrorable checkpoints in the official upstream Model Zoo**,
+each mirrored to its own Hub repo (weights, a **self-contained flattened**
+config, `config.json`, and a demo banner generated with that checkpoint).
+**box/mask AP is the authors' number, carried from the paper / official model
+zoo (COCO `val2017` or LVIS `val` as noted per table). It has not been
+re-evaluated in this fork.** Collections:
 [Co-DINO](https://huggingface.co/collections/dronefreak/co-dino-community-mirrors-6aa090c32ace71749a0033a9)
 ·
 [Co-Deformable-DETR](https://huggingface.co/collections/dronefreak/co-deformable-detr-community-mirrors-6aa090beab5d8c3f5bf37f44).
@@ -183,9 +184,46 @@ has not been re-evaluated in this fork.** Collections:
 | Swin-L · LSJ | 1x (12 ep) | 59.3 | [`co-dino-5scale-lsj-swin-l-1x-coco`](https://huggingface.co/dronefreak/co-dino-5scale-lsj-swin-l-1x-coco) | [cfg](projects/configs/co_dino/co_dino_5scale_lsj_swin_large_1x_coco.py) |
 | Swin-L · LSJ | 3x (36 ep) | 60.7 | [`co-dino-5scale-lsj-swin-l-3x-coco`](https://huggingface.co/dronefreak/co-dino-5scale-lsj-swin-l-3x-coco) | [cfg](projects/configs/co_dino/co_dino_5scale_lsj_swin_large_3x_coco.py) |
 
-**Not mirrored:** the ViT-L records (up to 66.0 AP COCO test-dev), the
-Objects365-pretrained Swin-L, and the LVIS checkpoints. Those are on the
-authors' Hub ([`zongzhuofan`](https://huggingface.co/zongzhuofan)) and listed in
+**Not mirrored:** `co_dino_5scale_lsj_swin_large_2x_coco` (60.4 AP, Swin-L ·
+LSJ · 2x). It isn't in any Google Drive folder available to this fork, so it
+can't be mirrored until a source turns up; accepted as a known gap for now.
+
+### Co-DINO, 5-scale, Objects365 pretrain (Swin-L)
+
+⚠️ **Objects365 terms.** These 3 checkpoints were pretrained on Objects365
+before fine-tuning, and Objects365's own terms restrict it to non-commercial
+research use; that restriction plausibly carries through to weights derived
+from it. See each card's License status section before any commercial use.
+
+| Backbone | Pretrain → fine-tune | Eval set | box AP | 🤗 Mirror | Config |
+|---|---|---|---|---|---|
+| Swin-L | Objects365 → COCO (16 ep) | COCO `val2017` | 64.1 | [`co-dino-5scale-swin-l-o365-coco`](https://huggingface.co/dronefreak/co-dino-5scale-swin-l-o365-coco) | [cfg](projects/configs/co_dino/co_dino_5scale_swin_large_16e_o365tococo.py) |
+| Swin-L · LSJ | (no O365) → LVIS (3x, 36 ep) | LVIS `val` | 56.9 | [`co-dino-5scale-lsj-swin-l-3x-lvis`](https://huggingface.co/dronefreak/co-dino-5scale-lsj-swin-l-3x-lvis) | [cfg](projects/configs/co_dino/co_dino_5scale_lsj_swin_large_3x_lvis.py) |
+| Swin-L · LSJ | Objects365 → LVIS (16 ep) | LVIS `val` | 64.5 | [`co-dino-5scale-lsj-swin-l-o365-lvis`](https://huggingface.co/dronefreak/co-dino-5scale-lsj-swin-l-o365-lvis) | [cfg](projects/configs/co_dino/co_dino_5scale_lsj_swin_large_16e_o365tolvis.py) |
+
+(The middle row has no Objects365 pretrain, just an LVIS fine-tune; grouped
+here because it shares the LVIS-eval caveats below with its two O365 siblings.)
+
+### Co-DINO, ViT-L (304M, EVA-02 + Objects365 pretrain)
+
+Mirrored from the authors' own Hub repos
+([`zongzhuofan`](https://huggingface.co/zongzhuofan)) rather than Google
+Drive, for consistency with the rest of this zoo (their repos ship a bare
+weights file with no config or demo). Same ⚠️ Objects365 caveat as above
+applies to all 4. **CPU-only on a 12 GB GPU** (confirmed OOM at this size);
+a 24 GB+ GPU should have headroom but hasn't been verified here.
+
+| Variant | Eval set | box AP | mask AP | 🤗 Mirror | Config |
+|---|---|---|---|---|---|
+| ViT-L | COCO (65.9 val / 66.0 test-dev) | 65.9 | - | [`co-dino-5scale-vit-l-coco`](https://huggingface.co/dronefreak/co-dino-5scale-vit-l-coco) | [cfg](projects/configs/co_dino_vit/co_dino_5scale_vit_large_coco.py) |
+| ViT-L-Inst | COCO (65.8 val / 66.0 test-dev) | 65.8 | 56.6 | [`co-dino-5scale-vit-l-coco-instance`](https://huggingface.co/dronefreak/co-dino-5scale-vit-l-coco-instance) | [cfg](projects/configs/co_dino_vit/co_dino_5scale_vit_large_coco_instance.py) |
+| ViT-L · LSJ | LVIS `val` | 68.0 | - | [`co-dino-5scale-lsj-vit-l-lvis`](https://huggingface.co/dronefreak/co-dino-5scale-lsj-vit-l-lvis) | [cfg](projects/configs/co_dino_vit/co_dino_5scale_lsj_vit_large_lvis.py) |
+| ViT-L-Inst · LSJ | LVIS `val` | 67.3 | 60.7 | [`co-dino-5scale-lsj-vit-l-lvis-instance`](https://huggingface.co/dronefreak/co-dino-5scale-lsj-vit-l-lvis-instance) | [cfg](projects/configs/co_dino_vit/co_dino_5scale_lsj_vit_large_lvis_instance.py) |
+
+**Not mirrored:** the ViT-L checkpoint pretrained on Objects365 only (no
+COCO/LVIS fine-tune) has no matching config anywhere in this repo, so it
+isn't a runnable detector; skipped for the same reason as the Swin-L
+Objects365-only pretrain checkpoint. Both are listed, unmirrored, in
 [`README.upstream.md`](README.upstream.md#model-zoo-original-full).
 
 ---
